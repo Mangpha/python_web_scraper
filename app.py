@@ -8,9 +8,9 @@ def home():
     return render_template("index.html", name="Mangpha")
 
 
-@app.route("/hello")
-def hello():
-    return "Hi There"
+@app.route("/search")
+def search():
+    return render_template("search.html")
 
 
 if __name__ == "__main__":
