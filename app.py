@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, send_file
 from file import SearchAndCreateData
 
 app = Flask(__name__)
@@ -14,6 +14,8 @@ def home():
 @app.route("/search")
 def search():
     keyword = request.args.get("keyword")
+    if keyword == None:
+        return redirect("/")
     # keywords = [
     #     "flutter",
     #     "python",
@@ -28,6 +30,17 @@ def search():
         data = SearchAndCreateData(keyword)
         DB[keyword] = data.Search()
     return render_template("search.html", keyword=keyword, jobs=DB[keyword])
+
+
+@app.route("/export")
+def export():
+    keyword = request.args.get("keyword")
+    if keyword == None:
+        return redirect("/")
+    if keyword not in DB:
+        return redirect(f"/search?keyword={keyword}")
+    SearchAndCreateData(keyword).CreateCSV(DB[keyword])
+    return send_file(f"./jobs/{keyword}.csv", as_attachment=True)
 
 
 if __name__ == "__main__":
